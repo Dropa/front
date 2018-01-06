@@ -78,16 +78,8 @@ myApp.controller('LoginController', [
                 });
         };
         var doLogout = function () {
-            var data = {
-                csrf_token: auth.currentUser().csrf_token
-            };
             return $http
-                .post('http://dropa.asuscomm.com/dapi/user/logout?_format=json', data, {
-                    headers: {
-                        'Content-Type': 'Content-type: application/json',
-                        'X-CSRF-Token': auth.currentUser().csrf_token
-                    }
-                })
+                .get('http://dropa.asuscomm.com/dapi/user/logout?_format=json')
                 .success(function (res) {
                     console.log(res);
                     auth.logout();
@@ -109,6 +101,26 @@ myApp.controller('ApplicationController', [
     function ($scope, $http, auth) {
         $scope.authed = auth.authed;
         $scope.currentUser = auth.currentUser;
+        $scope.logstat = function () {
+            var token = '';
+            $http
+                .get('http://dropa.asuscomm.com/dapi/rest/session/token')
+                .success(function (res) {
+                    token = res;
+                });
+            return $http
+                .get('http://dropa.asuscomm.com/dapi/user/login_status?_format=json', {
+                    headers: {
+                        'Content-Type': 'Content-type: application/json',
+                        'X-CSRF-Token': token
+                    }})
+                .success(function (res) {
+                    console.log(res);
+                })
+                .error(function (res) {
+                    console.log(res);
+                })
+        }
     }
 ]);
 
