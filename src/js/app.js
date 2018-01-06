@@ -79,7 +79,7 @@ myApp.controller('LoginController', [
         };
         var doLogout = function () {
             return $http
-                .get('http://dropa.asuscomm.com/dapi/user/logout?_format=json')
+                .get('http://dropa.asuscomm.com/dapi/user/logout')
                 .success(function (res) {
                     console.log(res);
                     auth.logout();
