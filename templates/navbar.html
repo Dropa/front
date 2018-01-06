@@ -1,0 +1,64 @@
+<nav class="navbar-fixed-top navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/">MahAweSomeSite</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li><a href="#/">Etusivu</a></li>
+            </ul>
+            <ul ng-if="!authed()" class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown"><b>Kirjaudu</b> <span class="caret"></span></a>
+                    <ul id="login-dp" class="dropdown-menu">
+                        <li>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form ng-controller="LoginController" class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav" name="loginForm"
+                                          ng-submit="login(credentials)" novalidate>
+                                        <div class="form-group" ng-class="{true: 'has-error', false: ''}[loginError]">
+                                            <label class="sr-only" for="loginUsername">Username</label>
+                                            <input type="text" class="form-control" id="loginUsername" placeholder="Username" ng-model="credentials.username" required>
+                                        </div>
+                                        <div class="form-group" ng-class="{true: 'has-error', false: ''}[loginError]">
+                                            <label class="sr-only" for="loginPassword">Password</label>
+                                            <input type="password" class="form-control" id="loginPassword" placeholder="Password" ng-model="credentials.password" required>
+                                            <span class="help-block" ng-if="loginError"> Check username and password</span>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary btn-block">Kirjaudu</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul ng-if="authed()" class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown"><b>{{currentUser().name}}</b> <span class="caret"></span></a>
+                    <ul id="logout-dp" class="dropdown-menu">
+                        <li>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form ng-controller="LoginController" class="form" role="form" method="post" accept-charset="UTF-8" id="logout-nav" name="logoutForm"
+                                          ng-submit="logout()" novalidate>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-danger btn-block">Kirjaudu ulos</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -12,65 +12,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
     <script src="src/js/app.js"></script>
 </head>
-
 <body ng-controller="ApplicationController">
 
-<nav class="navbar-fixed-top navbar-inverse">
-    <div class="container">
-        <div class="collapse navbar-collapse">
-            <div>
-                <ul class="nav navbar-nav">
-                    <li><a href="#/">Etusivu</a></li>
-                </ul>
-            </div>
-            <ul ng-if="needLogin" class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
-                    <ul id="login-dp" class="dropdown-menu">
-                        <li>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <form ng-controller="LoginController" class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav" name="loginForm"
-                                          ng-submit="login(credentials)" novalidate>
-                                        <div class="form-group" ng-class="{true: 'has-error', false: ''}[loginError]">
-                                            <label class="sr-only" for="loginUsername">Username</label>
-                                            <input type="text" class="form-control" id="loginUsername" placeholder="Username" ng-model="credentials.username" required>
-                                        </div>
-                                        <div class="form-group" ng-class="{true: 'has-error', false: ''}[loginError]">
-                                            <label class="sr-only" for="loginPassword">Password</label>
-                                            <input type="password" class="form-control" id="loginPassword" placeholder="Password" ng-model="credentials.password" required>
-                                            <span class="help-block" ng-if="loginError"> Check username and password</span>
-                                        </div>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div>
-</nav>
-<button ng-controller="check" ng-click="check()">Check!</button>
-
-<div ng-controller="Ctrl1">
-    <h2>Ctrl1 - List</h2>
-    <ul>
-        <li ng-repeat="item in list()">{{item}}</li>
-    </ul>
-</div>
-<hr />
-<div ng-controller="Ctrl2">
-    <h2>Ctrl2 - Add</h2>
-    <form ng-submit="add(newItem); newItem = '';">
-        <input type="text" placeholder="new item..." ng-model="newItem">
-        <br />
-        <input class="btn" type="submit">
-    </form>
-</div>
+<div ng-include="'templates/navbar.html'"></div>
 
 <div class="container">
     <div ng-view></div>
