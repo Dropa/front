@@ -1,14 +1,33 @@
 var myApp = angular.module("myApp", ["ngRoute"]);
 
-myApp.config(function($routeProvider) {
+myApp.config(['$routeProvider', function($routeProvider) {
+    var authRequired = function ($location, $q, auth) {
+        var deferred = $q.defer();
+        if (auth.authed()) {
+            deferred.resolve();
+        }
+        else {
+            deferred.reject();
+            $location.url('/');
+        }
+        return deferred.promise;
+    };
+
     $routeProvider
         .when("/", {
             templateUrl: "templates/frontpage.html",
             controller: "FrontPageController"
         })
-});
+        .when("/articles", {
+            templateUrl: "templates/articles.html",
+            controller: "ArticlesController",
+            resolve:{authOk:authRequired}
+        })
+        .otherwise({redirectTo: '/'});
 
-myApp.factory('auth', function() {
+}]);
+
+myApp.factory('auth', function($http) {
     if (!storedUser) {
         var storedUser = [];
     }
@@ -16,12 +35,23 @@ myApp.factory('auth', function() {
         var authService = {};
     }
 
+    authService.basePath = function () {
+        return 'http://dropa.asuscomm.com/dapi';
+    };
+
     authService.authed = function () {
         return !!storedUser.uid;
     };
 
     authService.currentUser = function () {
       return storedUser;
+    };
+
+    authService.token = function () {
+        $http.get(authService.basePath() + '/rest/session/token')
+            .success(function (token) {
+                return token;
+            })
     };
 
     authService.login = function (user) {
@@ -51,7 +81,12 @@ myApp.controller('LoginController', [
         $scope.loginError = false;
 
         $scope.login = function (credentials) {
-            doLogin(credentials);
+            doLogin(credentials).error(function () {
+                console.log("Trying again.");
+                doLogout().success(function () {
+                    doLogin(credentials);
+                });
+            });
         };
         $scope.logout = function () {
             doLogout();
@@ -62,8 +97,9 @@ myApp.controller('LoginController', [
                 name: credentials.username,
                 pass: credentials.password
             };
+
             return $http
-                .post('http://dropa.asuscomm.com/dapi/user/login?_format=json', data, {
+                .post(auth.basePath() + '/user/login?_format=json', data, {
                     headers: {
                         'Content-Type': 'Content-type: application/json'
                     }
@@ -72,20 +108,18 @@ myApp.controller('LoginController', [
                     $scope.loginError = false;
                     auth.login(res);
                 })
-                .error(function (res) {
-                    console.log(res);
+                .error(function () {
                     $scope.loginError = true;
                 });
         };
         var doLogout = function () {
             return $http
-                .get('http://dropa.asuscomm.com/dapi/user/logout')
-                .success(function (res) {
-                    console.log(res);
+                .get(auth.basePath() + '/user/logout')
+                .success(function () {
                     auth.logout();
                 })
-                .error(function (res) {
-                    console.log(res);
+                .error(function () {
+
                 })
         }
 }]);
@@ -96,31 +130,29 @@ myApp.controller('FrontPageController', [
     }
 ]);
 
+myApp.controller('ArticlesController', [
+    '$scope', '$http', 'auth',
+    function ($scope, $http, auth) {
+        $scope.currentUser = auth.currentUser;
+        $scope.articles = [];
+        $scope.initArticles = function () {
+            $http.get(auth.basePath() + '/articles')
+                .success(function (data) {
+                    $scope.articles = data;
+                    console.log(data);
+                });
+        };
+        $scope.userOwns = function (article) {
+            return article.author_id === auth.currentUser().uid;
+        }
+    }
+]);
+
 myApp.controller('ApplicationController', [
     '$scope', '$http', 'auth',
     function ($scope, $http, auth) {
         $scope.authed = auth.authed;
         $scope.currentUser = auth.currentUser;
-        $scope.logstat = function () {
-            var token = '';
-            $http
-                .get('http://dropa.asuscomm.com/dapi/rest/session/token')
-                .success(function (res) {
-                    token = res;
-                });
-            return $http
-                .get('http://dropa.asuscomm.com/dapi/user/login_status?_format=json', {
-                    headers: {
-                        'Content-Type': 'Content-type: application/json',
-                        'X-CSRF-Token': token
-                    }})
-                .success(function (res) {
-                    console.log(res);
-                })
-                .error(function (res) {
-                    console.log(res);
-                })
-        }
     }
 ]);
 
