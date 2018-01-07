@@ -1,0 +1,11 @@
+<div data-ng-init="initUser()">
+    <div class="well">
+        <h2>{{user.name[0].value}} <span class="small">(ID: {{user.uid[0].value}})</span></h2>
+        <p><span class="label label-default">Sähköposti:</span> {{user.mail[0].value}}</p>
+        <p><span class="label label-default">Aikavyöhyke:</span> {{user.timezone[0].value}}</p>
+        <span ng-if="user.roles[0]" class="label label-default">Roolit:</span>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="role in user.roles">{{role.target_id}}</li>
+        </ul>
+    </div>
+</div>

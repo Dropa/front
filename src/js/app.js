@@ -143,6 +143,7 @@ myApp.controller('LoginController', [
 myApp.controller('FrontPageController', [
     '$scope', '$http',
     function ($scope, $http) {
+
     }
 ]);
 
@@ -255,6 +256,20 @@ myApp.controller('ArticlesController', [
                 })
             };
             auth.tokenize(post);
+        }
+    }
+]);
+
+myApp.controller('ProfileController', [
+    '$scope', '$http', 'auth',
+    function ($scope, $http, auth) {
+        $scope.user = {};
+
+        $scope.initUser = function () {
+            $http.get(auth.basePath() + '/user/' + auth.currentUser().uid + '?_format=json')
+                .success(function (res) {
+                    $scope.user = res;
+                })
         }
     }
 ]);
