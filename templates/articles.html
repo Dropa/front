@@ -1,0 +1,28 @@
+<div class="page-header" data-ng-init="initArticles()">
+    <h3>Artikkelit</h3>
+</div>
+
+<div>
+    <div ng-repeat="article in articles" class="panel panel-default">
+        <div class="panel-heading">
+                <div>{{article.title}}</div>
+                <div ng-if="userOwns(article)" class="pull-right">
+                    <button type="button" class="btn btn-group btn-primary" data-toggle="modal" data-target="#showEmployee" ng-click="showArticle(article.id)">
+                        <span class='glyphicon glyphicon-eye-open'></span>
+                    </button>
+                    <button type="button" class='btn btn-group btn-warning' data-toggle="modal" data-target="#updateEmployee" ng-click="getUpEmployee(article.id)">
+                        <span class='glyphicon glyphicon-pencil'></span>
+                    </button>
+                    <button type="button" class='btn btn-group btn-danger' data-toggle="modal" data-target="#removeEmployee" ng-click="getRemovePrompt(article)">
+                        <span class='glyphicon glyphicon-trash'></span>
+                    </button>
+                </div>
+        </div>
+        <div class="panel-body">
+            {{article.body}}
+        </div>
+        <div class="panel-footer">
+            {{article.created}} by {{article.author}}
+        </div>
+    </div>
+</div>
