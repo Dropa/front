@@ -138,8 +138,14 @@ myApp.controller('ArticlesController', [
     '$scope', '$http', 'auth',
     function ($scope, $http, auth) {
         $scope.currentUser = auth.currentUser;
+        $scope.authed = auth.authed;
         $scope.articles = [];
         $scope.selectedArticle = {};
+        $scope.newArticle = {
+            title: '',
+            body: '',
+            image: ''
+        };
         $scope.initArticles = function () {
             $http.get(auth.basePath() + '/articles')
                 .success(function (data) {
@@ -166,6 +172,13 @@ myApp.controller('ArticlesController', [
                     $scope.selectedArticle = data[0];
                 });
         };
+        $scope.resetArticle = function () {
+            $scope.newArticle = {};
+        };
+        $scope.addArticle = function (newArticle) {
+            console.log(newArticle);
+            $scope.resetArticle();
+        }
     }
 ]);
 
