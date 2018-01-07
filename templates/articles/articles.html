@@ -1,0 +1,40 @@
+<div class="page-header" data-ng-init="initArticles()">
+    <h3>Artikkelit</h3>
+</div>
+
+<div>
+    <div ng-repeat="article in articles" class="panel panel-default">
+        <div class="panel-heading">
+                <div>{{article.title}}</div>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-group btn-primary" data-toggle="modal" data-target="#showArticle" ng-click="showArticle(article.id)">
+                        <span class='glyphicon glyphicon-eye-open'></span>
+                    </button>
+                    <button ng-if="editAccess(article)" type="button" class='btn btn-group btn-warning' data-toggle="modal" data-target="#updateArticle" ng-click="updateArticle(article.id)">
+                        <span class='glyphicon glyphicon-pencil'></span>
+                    </button>
+                    <button ng-if="editAccess(article)" type="button" class='btn btn-group btn-danger' data-toggle="modal" data-target="#removeArticle" ng-click="getRemovePrompt(article)">
+                        <span class='glyphicon glyphicon-trash'></span>
+                    </button>
+                </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-9">
+                    {{article.body}}
+                </div>
+                <div class="col-md-3">
+                    <img ng-if="article.image" class="img-responsive img-thumbnail" src="http://dropa.asuscomm.com{{article.image}}"/>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            {{article.created}} by {{article.author}}
+        </div>
+    </div>
+</div>
+
+<div ng-include="'templates/articles/new.html'"></div>
+<div ng-include="'templates/articles/view.html'"></div>
+<div ng-include="'templates/articles/update.html'"></div>
+<div ng-include="'templates/articles/remove.html'"></div>

@@ -1,4 +1,4 @@
-var myApp = angular.module("myApp", ["ngRoute"]);
+var myApp = angular.module('myApp', ['ngRoute']);
 
 myApp.config(['$routeProvider', function($routeProvider) {
     var authRequired = function ($location, $q, auth) {
@@ -14,13 +14,17 @@ myApp.config(['$routeProvider', function($routeProvider) {
     };
 
     $routeProvider
-        .when("/", {
-            templateUrl: "templates/frontpage.html",
-            controller: "FrontPageController"
+        .when('/', {
+            templateUrl: 'templates/frontpage.html',
+            controller: 'FrontPageController'
         })
-        .when("/articles", {
-            templateUrl: "templates/articles.html",
-            controller: "ArticlesController",
+        .when('/articles', {
+            templateUrl: 'templates/articles/articles.html',
+            controller: 'ArticlesController'
+        })
+        .when('/profile', {
+            templateUrl: 'templates/profile/profile.html',
+            controller: 'ProfileController',
             resolve:{authOk:authRequired}
         })
         .otherwise({redirectTo: '/'});
@@ -82,7 +86,7 @@ myApp.controller('LoginController', [
 
         $scope.login = function (credentials) {
             doLogin(credentials).error(function () {
-                console.log("Trying again.");
+                console.log('Trying again.');
                 doLogout().success(function () {
                     doLogin(credentials);
                 });
@@ -135,16 +139,33 @@ myApp.controller('ArticlesController', [
     function ($scope, $http, auth) {
         $scope.currentUser = auth.currentUser;
         $scope.articles = [];
+        $scope.selectedArticle = {};
         $scope.initArticles = function () {
             $http.get(auth.basePath() + '/articles')
                 .success(function (data) {
                     $scope.articles = data;
-                    console.log(data);
                 });
         };
-        $scope.userOwns = function (article) {
+        $scope.editAccess = function (article) {
+            roles = auth.currentUser().roles;
+            if (roles) {
+                if (roles.indexOf('administrator') !== -1 || roles.indexOf('article_moderator') !== -1) {
+                    return true;
+                }
+            }
             return article.author_id === auth.currentUser().uid;
-        }
+        };
+        $scope.showArticle = function (articleId) {
+            $scope.selectedArticle = {};
+            $http.get(auth.basePath() + "/articles/" + articleId + '?_format=json', {
+                headers: {
+                    'Content-Type': 'Content-type: application/json'
+                }})
+                .success(function(data) {
+                    console.log(data);
+                    $scope.selectedArticle = data[0];
+                });
+        };
     }
 ]);
 
