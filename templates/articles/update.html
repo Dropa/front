@@ -1,0 +1,38 @@
+<div class="modal fade" id="editArticle" tabindex="-1" role="dialog" aria-labelledby="Article">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="articleLabel">Uusi artikkeli</h4>
+            </div>
+            <form class="form-horizontal">
+                <div class="modal-body" id="update-article-modal-body">
+                    <div class="form-group">
+                        <label for="updateArticleTitle" class="col-lg-2 control-label">Otsikko</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="updateArticleTitle" name="inputBody" placeholder="Esim. Päivän uutinen" ng-model="selectedArticle.title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateArticleBody" class="col-lg-2 control-label">Sisältö</label>
+                        <div class="col-lg-10">
+                            <textarea class="form-control" rows="5" id="updateArticleBody" name="inputBody" ng-model="selectedArticle.body"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group disabled">
+                        <label for="updateArticleInputImage" class="col-lg-2 control-label">Kuva</label>
+                        <div class="col-lg-10">
+                            <input type="file" class="form-control" id="updateArticleInputImage" name="inputImage" ng-model="selectedArticle.image" disabled>
+                            <span class="help-block">Kuvien lähettäminen tulossa mahdollisesti myöhemmin.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="resetArticle()">Peruuta</button>
+                    <input type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="updateArticle(selectedArticle)" value="Tallenna">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -38,6 +38,9 @@ myApp.factory('auth', function($http) {
     if (!authService) {
         var authService = {};
     }
+    if (!authToken) {
+        var authToken = '';
+    }
 
     authService.basePath = function () {
         return 'http://dropa.asuscomm.com/dapi';
@@ -52,10 +55,19 @@ myApp.factory('auth', function($http) {
     };
 
     authService.token = function () {
+
+        return authToken;
+    };
+
+    authService.tokenize = function (_callback) {
         $http.get(authService.basePath() + '/rest/session/token')
-            .success(function (token) {
-                return token;
+            .success(function (result) {
+                authToken = result;
+                _callback();
             })
+            .error(function () {
+                console.log('Problem while fetching token.')
+            });
     };
 
     authService.login = function (user) {
@@ -105,7 +117,7 @@ myApp.controller('LoginController', [
             return $http
                 .post(auth.basePath() + '/user/login?_format=json', data, {
                     headers: {
-                        'Content-Type': 'Content-type: application/json'
+                        'Content-type': 'application/json'
                     }
                 })
                 .success(function (res) {
@@ -141,11 +153,7 @@ myApp.controller('ArticlesController', [
         $scope.authed = auth.authed;
         $scope.articles = [];
         $scope.selectedArticle = {};
-        $scope.newArticle = {
-            title: '',
-            body: '',
-            image: ''
-        };
+        $scope.newArticle = {};
         $scope.initArticles = function () {
             $http.get(auth.basePath() + '/articles')
                 .success(function (data) {
@@ -163,21 +171,90 @@ myApp.controller('ArticlesController', [
         };
         $scope.showArticle = function (articleId) {
             $scope.selectedArticle = {};
-            $http.get(auth.basePath() + "/articles/" + articleId + '?_format=json', {
+            $http.get(auth.basePath() + '/articles/' + articleId + '?_format=json', {
                 headers: {
-                    'Content-Type': 'Content-type: application/json'
+                    'Content-type': 'application/json'
                 }})
                 .success(function(data) {
-                    console.log(data);
                     $scope.selectedArticle = data[0];
                 });
         };
         $scope.resetArticle = function () {
             $scope.newArticle = {};
+            $scope.selectedArticle = {};
         };
         $scope.addArticle = function (newArticle) {
-            console.log(newArticle);
-            $scope.resetArticle();
+            // TODO: Apparently newArticle.image does not get here.
+            var data = {
+                type: 'article',
+                title: [newArticle.title],
+                body: [newArticle.body]
+            };
+            var post = function () {
+                $http.post(auth.basePath() + '/node?_format=json', data, {
+                    headers: {
+                        'X-CSRF-Token': auth.token(),
+                        'Content-type': 'application/json'
+                    }
+                }).success(function(res) {
+                    $scope.resetArticle();
+                    $scope.initArticles();
+                })
+            };
+            auth.tokenize(post);
+        };
+        $scope.editArticle = function (articleId) {
+            $scope.selectedArticle = {};
+            $http.get(auth.basePath() + '/articles/' + articleId + '?_format=json', {
+                headers: {
+                    'Content-type': 'application/json'
+                }})
+                .success(function(data) {
+                    $scope.selectedArticle = data[0];
+                });
+        };
+        $scope.updateArticle = function (article) {
+            var data = {
+                type: 'article',
+                title: [article.title],
+                body: [article.body]
+            };
+            var post = function () {
+                $http.patch(auth.basePath() + '/node/' + article.id + '?_format=json', data, {
+                    headers: {
+                        'X-CSRF-Token': auth.token(),
+                        'Content-type': 'application/json'
+                    }
+                }).success(function(res) {
+                    $scope.resetArticle();
+                    $scope.initArticles();
+                })
+            };
+            auth.tokenize(post);
+        };
+        $scope.removeArticle = function (articleId) {
+            $scope.selectedArticle = {};
+            $http.get(auth.basePath() + '/articles/' + articleId + '?_format=json', {
+                headers: {
+                    'Content-type': 'application/json'
+                }})
+                .success(function(data) {
+                    $scope.selectedArticle = data[0];
+                });
+        };
+        $scope.deleteArticle = function (article) {
+            var post = function () {
+                $http.delete(auth.basePath() + '/node/' + article.id + '?_format=json', {
+                    headers: {
+                        'X-CSRF-Token': auth.token(),
+                        'Content-type': 'application/json'
+                    }
+                }).success(function(res) {
+                    $scope.resetArticle();
+                    $scope.initArticles();
+                })
+            };
+            auth.tokenize(post);
         }
     }
 ]);

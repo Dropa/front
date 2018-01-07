@@ -1,6 +1,6 @@
 <div class="page-header" data-ng-init="initArticles()">
     <h3>Artikkelit
-        <button ng-if="!authed()" type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#newArticle">
+        <button ng-if="authed()" type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#newArticle">
             <span class='glyphicon glyphicon-plus'></span> Luo uusi
         </button>
     </h3>
@@ -14,10 +14,10 @@
                     <button type="button" class="btn btn-group btn-primary" data-toggle="modal" data-target="#showArticle" ng-click="showArticle(article.id)">
                         <span class='glyphicon glyphicon-eye-open'></span>
                     </button>
-                    <button ng-if="editAccess(article)" type="button" class='btn btn-group btn-warning' data-toggle="modal" data-target="#updateArticle" ng-click="updateArticle(article.id)">
+                    <button ng-if="editAccess(article)" type="button" class='btn btn-group btn-warning' data-toggle="modal" data-target="#editArticle" ng-click="editArticle(article.id)">
                         <span class='glyphicon glyphicon-pencil'></span>
                     </button>
-                    <button ng-if="editAccess(article)" type="button" class='btn btn-group btn-danger' data-toggle="modal" data-target="#removeArticle" ng-click="getRemovePrompt(article)">
+                    <button ng-if="editAccess(article)" type="button" class='btn btn-group btn-danger' data-toggle="modal" data-target="#removeArticle" ng-click="removeArticle(article.id)">
                         <span class='glyphicon glyphicon-trash'></span>
                     </button>
                 </div>

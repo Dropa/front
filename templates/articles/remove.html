@@ -1,0 +1,17 @@
+<div class="modal fade" id="removeArticle" tabindex="-1" role="dialog" aria-labelledby="Article">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="removeArticleLabel">{{selectedArticle.title}}</h4><p class="small">Luonut: {{selectedArticle.author}} ({{selectedArticle.created}})</p>
+            </div>
+            <div class="modal-body" id="article-modal-body">
+                <p>Oletko varma että haluat poistaa valitun artikkelin?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="resetArticle()">Peruuta</button>
+                <input type="submit" class="btn btn-danger" data-dismiss="modal" ng-click="deleteArticle(selectedArticle)" value="Poista">
+            </div>
+        </div>
+    </div>
+</div>
