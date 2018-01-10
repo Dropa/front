@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['ngRoute']);
+var myApp = angular.module('myApp', ['ngRoute', 'ui.rCalendar']);
 
 myApp.config(['$routeProvider', function($routeProvider) {
     var authRequired = function ($location, $q, auth) {
@@ -15,12 +15,12 @@ myApp.config(['$routeProvider', function($routeProvider) {
 
     $routeProvider
         .when('/', {
-            templateUrl: 'templates/frontpage.html',
-            controller: 'FrontPageController'
-        })
-        .when('/articles', {
             templateUrl: 'templates/articles/articles.html',
             controller: 'ArticlesController'
+        })
+        .when('/events', {
+            templateUrl: 'templates/events/events.html',
+            controller: 'EventsController'
         })
         .when('/profile', {
             templateUrl: 'templates/profile/profile.html',
@@ -140,13 +140,6 @@ myApp.controller('LoginController', [
         }
 }]);
 
-myApp.controller('FrontPageController', [
-    '$scope', '$http',
-    function ($scope, $http) {
-
-    }
-]);
-
 myApp.controller('ArticlesController', [
     '$scope', '$http', 'auth',
     function ($scope, $http, auth) {
@@ -256,6 +249,61 @@ myApp.controller('ArticlesController', [
                 })
             };
             auth.tokenize(post);
+        }
+    }
+]);
+
+myApp.controller('EventsController', [
+    '$scope', '$http', 'auth',
+    function ($scope, $http, auth) {
+        'use strict';
+
+        $scope.changeMode = function (mode) {
+            $scope.mode = mode;
+        };
+
+        $scope.today = function () {
+            $scope.currentDate = new Date();
+        };
+
+        $scope.isToday = function () {
+            var today = new Date();
+            var currentCalendarDate = new Date($scope.currentDate);
+
+            today.setHours(0, 0, 0, 0);
+            currentCalendarDate.setHours(0, 0, 0, 0);
+            return today.getTime() === currentCalendarDate.getTime();
+        };
+
+        $scope.loadEvents = function () {
+            $http.get(auth.basePath() + '/events?_format=json')
+                .success(function (json) {setEvents(json)});
+        };
+
+        $scope.onEventSelected = function (event) {
+            $scope.event = event;
+            $("#showEvent").modal();
+        };
+
+        $scope.onTimeSelected = function (selectedTime, events) {
+
+        };
+
+        function setEvents(json) {
+            var events = [];
+            for (var i = 0; i < json.length; i++) {
+                var startDate = new Date(json[i].start_date.replace(/-/g,'/').replace('T',' '));
+                var endDate = new Date(json[i].end_date.replace(/-/g,'/').replace('T',' '));
+                events.push({
+                    title: json[i].title,
+                    startTime: startDate,
+                    endTime: endDate,
+                    allDay: false,
+                    place: json[i].place,
+                    body: json[i].body
+                });
+            }
+            $scope.eventSource = events;
         }
     }
 ]);
