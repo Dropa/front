@@ -149,7 +149,7 @@ myApp.controller('ArticlesController', [
         $scope.selectedArticle = {};
         $scope.newArticle = {};
         $scope.initArticles = function () {
-            $http.get(auth.basePath() + '/articles')
+            $http.get(auth.basePath() + '/articles?_format=json')
                 .success(function (data) {
                     $scope.articles = data;
                 });
